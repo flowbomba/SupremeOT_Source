@@ -132,7 +132,7 @@ class Monster final : public Creature {
 		}
 
 		uint32_t getReflectValue(CombatType_t combatType) const;
-		uint32_t getHealingCombatValue(CombatType_t healingType) const;
+		uint64_t getHealingCombatValue(CombatType_t healingType) const;
 
 		bool canWalkOnFieldType(CombatType_t combatType) const;
 		void onAttackedCreatureDisappear(bool isLogout) override;
@@ -142,8 +142,8 @@ class Monster final : public Creature {
 		void onCreatureMove(Creature* creature, const Tile* newTile, const Position &newPos, const Tile* oldTile, const Position &oldPos, bool teleport) override;
 		void onCreatureSay(Creature* creature, SpeakClasses type, const std::string &text) override;
 
-		void drainHealth(Creature* attacker, int32_t damage) override;
-		void changeHealth(int32_t healthChange, bool sendHealthChange = true) override;
+		void drainHealth(Creature* attacker, int64_t damage) override;
+		void changeHealth(int64_t healthChange, bool sendHealthChange = true) override;
 		bool getNextStep(Direction &direction, uint32_t &flags) override;
 		void onFollowCreatureComplete(const Creature* creature) override;
 
@@ -214,9 +214,9 @@ class Monster final : public Creature {
 		void setMonsterIcon(uint16_t iconcount, uint16_t iconnumber);
 
 		void setNormalCreatureLight() override;
-		bool getCombatValues(int32_t &min, int32_t &max) override;
+		bool getCombatValues(int64_t &min, int64_t &max) override;
 
-		void doAttacking(uint32_t interval) override;
+		void doAttacking(uint64_t interval) override;
 		bool hasExtraSwing() override {
 			return extraMeleeAttack;
 		}

@@ -47,8 +47,8 @@ struct spellBlock_t {
 		uint32_t chance = 100;
 		uint32_t speed = 2000;
 		uint32_t range = 0;
-		int32_t minCombatValue = 0;
-		int32_t maxCombatValue = 0;
+		int64_t minCombatValue = 0;
+		int64_t maxCombatValue = 0;
 		bool combatSpell = false;
 		bool isMelee = false;
 };
@@ -57,9 +57,9 @@ class MonsterType {
 		struct MonsterInfo {
 				LuaScriptInterface* scriptInterface;
 
-				std::map<CombatType_t, int32_t> elementMap;
-				std::map<CombatType_t, int32_t> reflectMap;
-				std::map<CombatType_t, int32_t> healingMap;
+				std::map<CombatType_t, int64_t> elementMap;
+				std::map<CombatType_t, int64_t> reflectMap;
+				std::map<CombatType_t, int64_t> healingMap;
 
 				std::vector<voiceBlock_t> voiceVector;
 
@@ -113,12 +113,12 @@ class MonsterType {
 				int32_t creatureSayEvent = -1;
 				int32_t thinkEvent = -1;
 				int32_t targetDistance = 1;
-				int32_t runAwayHealth = 0;
-				int32_t health = 100;
-				int32_t healthMax = 100;
+				int64_t runAwayHealth = 0;
+				int64_t health = 100;
+				int64_t healthMax = 100;
 				int32_t changeTargetChance = 0;
-				int32_t defense = 0;
-				int32_t armor = 0;
+				int64_t defense = 0;
+				int64_t armor = 0;
 				int32_t strategiesTargetNearest = 0;
 				int32_t strategiesTargetHealth = 0;
 				int32_t strategiesTargetDamage = 0;
@@ -129,8 +129,8 @@ class MonsterType {
 				Faction_t faction = FACTION_DEFAULT;
 				phmap::flat_hash_set<Faction_t> enemyFactions;
 
-				bool canPushItems = false;
-				bool canPushCreatures = false;
+				bool canPushItems = true;
+				bool canPushCreatures = true;
 				bool pushable = true;
 				bool isSummonable = false;
 				bool isIllusionable = false;
@@ -194,16 +194,16 @@ class MonsterSpell {
 
 		uint16_t interval = 2000;
 
-		int32_t minCombatValue = 0;
-		int32_t maxCombatValue = 0;
-		int32_t attack = 0;
+		int64_t minCombatValue = 0;
+		int64_t maxCombatValue = 0;
+		int64_t attack = 0;
 		int32_t skill = 0;
 		int32_t length = 0;
 		int32_t spread = 0;
 		int32_t radius = 0;
-		int32_t conditionMinDamage = 0;
-		int32_t conditionMaxDamage = 0;
-		int32_t conditionStartDamage = 0;
+		int64_t conditionMinDamage = 0;
+		int64_t conditionMaxDamage = 0;
+		int64_t conditionStartDamage = 0;
 		int32_t tickInterval = 0;
 		int32_t speedChange = 0;
 		int32_t duration = 0;
@@ -247,7 +247,7 @@ class Monsters {
 		std::map<std::string, MonsterType*> monsters;
 
 	private:
-		ConditionDamage* getDamageCondition(ConditionType_t conditionType, int32_t maxDamage, int32_t minDamage, int32_t startDamage, uint32_t tickInterval);
+		ConditionDamage* getDamageCondition(ConditionType_t conditionType, int64_t maxDamage, int64_t minDamage, int64_t startDamage, uint32_t tickInterval);
 
 		MonsterType* loadMonster(const std::string &file, const std::string &monsterName, bool reloading = false);
 };

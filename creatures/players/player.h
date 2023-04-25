@@ -189,10 +189,18 @@ class Player final : public Creature, public Cylinder {
 		void addList() override;
 		void removePlayer(bool displayEffect, bool forced = true);
 
-		static uint64_t getExpForLevel(int32_t lv) {
+
+
+/* 		static uint64_t getExpForLevel(int32_t lv) {
 			lv--;
 			return ((50ULL * lv * lv * lv) - (150ULL * lv * lv) + (400ULL * lv)) / 3ULL;
-		}
+		} */
+		
+		static uint64_t getExpForLevel(int32_t lv) {
+			lv--;
+			return ((150ULL * lv * lv) - (50ULL * lv * lv) + (1200ULL)) / 3ULL;
+		}		
+		
 
 		uint16_t getStaminaMinutes() const {
 			return staminaMinutes;
@@ -626,11 +634,11 @@ class Player final : public Creature, public Cylinder {
 			}
 		}
 
-		int32_t getMaxHealth() const override {
-			return std::max<int32_t>(1, healthMax + varStats[STAT_MAXHITPOINTS]);
+		int64_t getMaxHealth() const override {
+			return std::max<int64_t>(1, healthMax + varStats[STAT_MAXHITPOINTS]);
 		}
-		uint32_t getMaxMana() const override {
-			return std::max<int32_t>(0, manaMax + varStats[STAT_MAXMANAPOINTS]);
+		uint64_t getMaxMana() const override {
+			return std::max<int64_t>(0, manaMax + varStats[STAT_MAXMANAPOINTS]);
 		}
 
 		Item* getInventoryItem(Slots_t slot) const;
@@ -647,7 +655,7 @@ class Player final : public Creature, public Cylinder {
 		}
 
 		void setVarStats(stats_t stat, int32_t modifier);
-		int32_t getDefaultStats(stats_t stat) const;
+		int64_t getDefaultStats(stats_t stat) const;
 
 		void addConditionSuppressions(uint32_t conditions);
 		void removeConditionSuppressions(uint32_t conditions);
@@ -750,15 +758,15 @@ class Player final : public Creature, public Cylinder {
 		bool addItemFromStash(uint16_t itemId, uint32_t itemCount);
 		void stowItem(Item* item, uint32_t count, bool allItems);
 
-		void changeHealth(int32_t healthChange, bool sendHealthChange = true) override;
-		void changeMana(int32_t manaChange) override;
+		void changeHealth(int64_t healthChange, bool sendHealthChange = true) override;
+		void changeMana(int64_t manaChange) override;
 		void changeSoul(int32_t soulChange);
 
 		bool isPzLocked() const {
 			return pzLocked;
 		}
 		BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t &damage, bool checkDefense = false, bool checkArmor = false, bool field = false) override;
-		void doAttacking(uint32_t interval) override;
+		void doAttacking(uint64_t interval) override;
 		bool hasExtraSwing() override {
 			return lastAttack > 0 && ((OTSYS_TIME() - lastAttack) >= getAttackSpeed());
 		}
@@ -793,8 +801,8 @@ class Player final : public Creature, public Cylinder {
 		int32_t getWeaponSkill(const Item* item) const;
 		void getShieldAndWeapon(const Item*&shield, const Item*&weapon) const;
 
-		void drainHealth(Creature* attacker, int32_t damage) override;
-		void drainMana(Creature* attacker, int32_t manaLoss) override;
+		void drainHealth(Creature* attacker, int64_t damage) override;
+		void drainMana(Creature* attacker, int64_t manaLoss) override;
 		void addManaSpent(uint64_t amount);
 		void addSkillAdvance(skills_t skill, uint64_t count);
 
@@ -814,8 +822,8 @@ class Player final : public Creature, public Cylinder {
 		void onCombatRemoveCondition(Condition* condition) override;
 		void onAttackedCreature(Creature* target) override;
 		void onAttacked() override;
-		void onAttackedCreatureDrainHealth(Creature* target, int32_t points) override;
-		void onTargetCreatureGainHealth(Creature* target, int32_t points) override;
+		void onAttackedCreatureDrainHealth(Creature* target, int64_t points) override;
+		void onTargetCreatureGainHealth(Creature* target, int64_t points) override;
 		bool onKilledCreature(Creature* target, bool lastHit = true) override;
 		void onGainExperience(uint64_t gainExp, Creature* target) override;
 		void onGainSharedExperience(uint64_t gainExp, Creature* target);
@@ -2459,7 +2467,7 @@ class Player final : public Creature, public Cylinder {
 		uint8_t isDailyReward = DAILY_REWARD_NOTCOLLECTED;
 		uint32_t windowTextId = 0;
 		uint32_t editListId = 0;
-		uint32_t manaMax = 0;
+		uint64_t manaMax = 0;
 		int32_t varSkills[SKILL_LAST + 1] = {};
 		int32_t varStats[STAT_LAST + 1] = {};
 		int32_t shopCallback = -1;
@@ -2568,9 +2576,11 @@ class Player final : public Creature, public Cylinder {
 
 		bool isPromoted() const;
 
-		uint32_t getAttackSpeed() const {
-			return vocation->getAttackSpeed();
-		}
+    	uint32_t getAttackSpeed() const {
+    	uint32_t skillLevel = getSkillLevel(SKILL_FIST);
+    	skillLevel = std::min<uint16_t>(skillLevel, 90);
+    	return (vocation->getAttackSpeed() - (vocation->getAttackSpeed() * skillLevel / 100));
+    	}
 
 		static double_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
 		double getLostPercent() const;

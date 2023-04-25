@@ -48,7 +48,7 @@ bool MonsterType::canSpawn(const Position &pos) {
 	return canSpawn;
 }
 
-ConditionDamage* Monsters::getDamageCondition(ConditionType_t conditionType, int32_t maxDamage, int32_t minDamage, int32_t startDamage, uint32_t tickInterval) {
+ConditionDamage* Monsters::getDamageCondition(ConditionType_t conditionType, int64_t maxDamage, int64_t minDamage, int64_t startDamage, uint32_t tickInterval) {
 	ConditionDamage* condition = static_cast<ConditionDamage*>(Condition::createCondition(CONDITIONID_COMBAT, conditionType, 0, 0));
 	condition->setParam(CONDITION_PARAM_TICKINTERVAL, tickInterval);
 	condition->setParam(CONDITION_PARAM_MINVALUE, minDamage);

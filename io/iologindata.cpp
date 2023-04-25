@@ -213,8 +213,8 @@ bool IOLoginData::loadPlayer(Player* player, DBResult_ptr result) {
 		return false;
 	}
 
-	player->mana = result->getNumber<uint32_t>("mana");
-	player->manaMax = result->getNumber<uint32_t>("manamax");
+	player->mana = result->getNumber<uint64_t>("mana");
+	player->manaMax = result->getNumber<uint64_t>("manamax");
 	player->magLevel = result->getNumber<uint32_t>("maglevel");
 
 	uint64_t nextManaCount = player->vocation->getReqMana(player->magLevel + 1);
@@ -226,8 +226,8 @@ bool IOLoginData::loadPlayer(Player* player, DBResult_ptr result) {
 	player->manaSpent = manaSpent;
 	player->magLevelPercent = Player::getPercentLevel(player->manaSpent, nextManaCount);
 
-	player->health = result->getNumber<int32_t>("health");
-	player->healthMax = result->getNumber<int32_t>("healthmax");
+	player->health = result->getNumber<int64_t>("health");
+	player->healthMax = result->getNumber<int64_t>("healthmax");
 
 	player->defaultOutfit.lookType = result->getNumber<uint16_t>("looktype");
 	if (g_configManager().getBoolean(WARN_UNSAFE_SCRIPTS) && player->defaultOutfit.lookType != 0 && !g_game().isLookTypeRegistered(player->defaultOutfit.lookType)) {

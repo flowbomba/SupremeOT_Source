@@ -2090,8 +2090,8 @@ void ProtocolGame::parseBestiarysendMonsterData(NetworkMessage &msg) {
 
 		newmsg.addByte(attackmode);
 		newmsg.addByte(0x2);
-		newmsg.add<uint32_t>(mtype->info.healthMax);
-		newmsg.add<uint32_t>(mtype->info.experience);
+		newmsg.add<uint64_t>(mtype->info.healthMax);
+		newmsg.add<uint64_t>(mtype->info.experience);
 		newmsg.add<uint16_t>(mtype->getBaseSpeed());
 		newmsg.add<uint16_t>(mtype->info.armor);
 	}
@@ -6504,22 +6504,17 @@ void ProtocolGame::AddPlayerStats(NetworkMessage &msg) {
 	msg.add<uint16_t>(100);
 	/* END HEALTH PERCENT LIMITE DE 100% */	
 
-/* SALUD ORIGINAL */
-/* 	msg.add<uint16_t>(std::min<int32_t>(player->getHealth(), std::numeric_limits<uint16_t>::max()));
-	msg.add<uint16_t>(std::min<int32_t>(player->getMaxHealth(), std::numeric_limits<uint16_t>::max())); */
-/* END SALUD ORIGINAL */
 
-	/* SE ASIGNA CAP INFINITA EN EL CLIENTE SE MUESTRA 9999 */
-	msg.add<uint32_t>(999999);
-
-/* CAP ORIGINAL */
-/* 	msg.add<uint32_t>(player->hasFlag(PlayerFlags_t::HasInfiniteCapacity) ? 1000000 : player->getFreeCapacity());
+	/* CAP ORIGINAL */
+	msg.add<uint32_t>(player->hasFlag(PlayerFlags_t::HasInfiniteCapacity) ? 1000000 : player->getFreeCapacity());
 	if (oldProtocol) {
 		msg.add<uint32_t>(player->getFreeCapacity());
-	} */
-	/*END CAP ORIGINAL */
+	}
+	/* END CAP ORIGINAL */
 
-	msg.add<uint64_t>(player->getExperience());
+	/* EXPERIENCE DIVIDIDA ENTRE 1000 */
+	msg.add<uint64_t>(player->getExperience() / 1000);
+	
 
 	msg.add<uint16_t>(player->getLevel());
 	msg.addByte(std::min<uint8_t>(player->getLevelPercent(), 100));
@@ -6533,9 +6528,21 @@ void ProtocolGame::AddPlayerStats(NetworkMessage &msg) {
 	msg.add<uint16_t>(player->getGrindingXpBoost()); // low level bonus
 	msg.add<uint16_t>(player->getStoreXpBoost()); // xp boost
 	msg.add<uint16_t>(player->getStaminaXpBoost()); // stamina multiplier (100 = 1.0x)
+	
 
-	msg.add<uint16_t>(std::min<int32_t>(player->getMana(), std::numeric_limits<uint16_t>::max()));
-	msg.add<uint16_t>(std::min<int32_t>(player->getMaxMana(), std::numeric_limits<uint16_t>::max()));
+/* 	msg.add<uint16_t>(std::min<int32_t>(player->getMana(), std::numeric_limits<uint16_t>::max()));
+	msg.add<uint16_t>(std::min<int32_t>(player->getMaxMana(), std::numeric_limits<uint16_t>::max())); */
+	
+	/* APLICANDO MANA PERCENT LIMITE DE 100% */
+	uint16_t mPercent = (uint16_t)(((float)player->getMana() / (float)player->getMaxMana()) * 100.0);
+	if (mPercent > 100) {
+		mPercent = 100;
+	}
+	msg.add<uint16_t>(mPercent);
+	msg.add<uint16_t>(100);
+	/* END MANA PERCENT LIMITE DE 100% */
+	
+	
 
 	if (oldProtocol) {
 		msg.addByte(static_cast<uint8_t>(std::min<uint32_t>(player->getMagicLevel(), std::numeric_limits<uint8_t>::max())));

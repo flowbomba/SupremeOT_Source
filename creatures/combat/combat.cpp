@@ -24,29 +24,29 @@ CombatDamage Combat::getCombatDamage(Creature* creature, Creature* target) const
 	damage.primary.type = params.combatType;
 	if (formulaType == COMBAT_FORMULA_DAMAGE) {
 		damage.primary.value = normal_random(
-			static_cast<int32_t>(mina),
-			static_cast<int32_t>(maxa)
+			static_cast<int64_t>(mina),
+			static_cast<int64_t>(maxa)
 		);
 	} else if (creature) {
-		int32_t min, max;
+		int64_t min, max;
 		if (creature->getCombatValues(min, max)) {
 			damage.primary.value = normal_random(min, max);
 		} else if (Player* player = creature->getPlayer()) {
 			if (params.valueCallback) {
 				params.valueCallback->getMinMaxValues(player, damage, params.useCharges);
 			} else if (formulaType == COMBAT_FORMULA_LEVELMAGIC) {
-				int32_t levelFormula = player->getLevel() * 2 + player->getMagicLevel() * 3;
+				int64_t levelFormula = player->getLevel() * 2 + player->getMagicLevel() * 3;
 				damage.primary.value = normal_random(
-					static_cast<int32_t>(levelFormula * mina + minb),
-					static_cast<int32_t>(levelFormula * maxa + maxb)
+					static_cast<int64_t>(levelFormula * mina + minb),
+					static_cast<int64_t>(levelFormula * maxa + maxb)
 				);
 			} else if (formulaType == COMBAT_FORMULA_SKILL) {
 				Item* tool = player->getWeapon();
 				const Weapon* weapon = g_weapons().getWeapon(tool);
 				if (weapon) {
 					damage.primary.value = normal_random(
-						static_cast<int32_t>(minb),
-						static_cast<int32_t>(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb)
+						static_cast<int64_t>(minb),
+						static_cast<int64_t>(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb)
 					);
 
 					damage.secondary.type = weapon->getElementType();
@@ -59,8 +59,8 @@ CombatDamage Combat::getCombatDamage(Creature* creature, Creature* target) const
 					}
 				} else {
 					damage.primary.value = normal_random(
-						static_cast<int32_t>(minb),
-						static_cast<int32_t>(maxb)
+						static_cast<int64_t>(minb),
+						static_cast<int64_t>(maxb)
 					);
 				}
 			}
@@ -519,8 +519,8 @@ void Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 	if (attackerPlayer && targetMonster) {
 		const PreySlot* slot = attackerPlayer->getPreyWithMonster(targetMonster->getRaceId());
 		if (slot && slot->isOccupied() && slot->bonus == PreyBonus_Damage && slot->bonusTimeLeft > 0) {
-			damage.primary.value += static_cast<int32_t>(std::ceil((damage.primary.value * slot->bonusPercentage) / 100));
-			damage.secondary.value += static_cast<int32_t>(std::ceil((damage.secondary.value * slot->bonusPercentage) / 100));
+			damage.primary.value += static_cast<int64_t>(std::ceil((damage.primary.value * slot->bonusPercentage) / 100));
+			damage.secondary.value += static_cast<int64_t>(std::ceil((damage.secondary.value * slot->bonusPercentage) / 100));
 		}
 	}
 
@@ -528,8 +528,8 @@ void Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 	if (attackerMonster && targetPlayer) {
 		const PreySlot* slot = targetPlayer->getPreyWithMonster(attackerMonster->getRaceId());
 		if (slot && slot->isOccupied() && slot->bonus == PreyBonus_Defense && slot->bonusTimeLeft > 0) {
-			damage.primary.value -= static_cast<int32_t>(std::ceil((damage.primary.value * slot->bonusPercentage) / 100));
-			damage.secondary.value -= static_cast<int32_t>(std::ceil((damage.secondary.value * slot->bonusPercentage) / 100));
+			damage.primary.value -= static_cast<int64_t>(std::ceil((damage.primary.value * slot->bonusPercentage) / 100));
+			damage.secondary.value -= static_cast<int64_t>(std::ceil((damage.secondary.value * slot->bonusPercentage) / 100));
 		}
 	}
 

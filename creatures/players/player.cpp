@@ -624,7 +624,7 @@ void Player::setVarStats(stats_t stat, int32_t modifier) {
 	}
 }
 
-int32_t Player::getDefaultStats(stats_t stat) const {
+int64_t Player::getDefaultStats(stats_t stat) const {
 	switch (stat) {
 		case STAT_MAXHITPOINTS:
 			return healthMax;
@@ -1994,12 +1994,12 @@ void Player::removeMessageBuffer() {
 	}
 }
 
-void Player::drainHealth(Creature* attacker, int32_t damage) {
+void Player::drainHealth(Creature* attacker, int64_t damage) {
 	Creature::drainHealth(attacker, damage);
 	sendStats();
 }
 
-void Player::drainMana(Creature* attacker, int32_t manaLoss) {
+void Player::drainMana(Creature* attacker, int64_t manaLoss) {
 	Creature::drainMana(attacker, manaLoss);
 	sendStats();
 }
@@ -2110,13 +2110,13 @@ void Player::addExperience(Creature* target, uint64_t exp, bool sendText /* = fa
 			health += noneVocation->getHPGain();
 			manaMax += noneVocation->getManaGain();
 			mana += noneVocation->getManaGain();
-			capacity += noneVocation->getCapGain();
+			capacity += 0;
 		} else {
 			healthMax += vocation->getHPGain();
 			health += vocation->getHPGain();
 			manaMax += vocation->getManaGain();
 			mana += vocation->getManaGain();
-			capacity += vocation->getCapGain();
+		    capacity += 0;
 		}
 
 		currLevelExp = nextLevelExp;
@@ -2201,13 +2201,13 @@ void Player::removeExperience(uint64_t exp, bool sendText /* = false*/) {
 		// Player stats loss for vocations level <= 8
 		if (vocation->getId() != VOCATION_NONE && level <= 8) {
 			const Vocation* noneVocation = g_vocations().getVocation(VOCATION_NONE);
-			healthMax = std::max<int32_t>(0, healthMax - noneVocation->getHPGain());
-			manaMax = std::max<int32_t>(0, manaMax - noneVocation->getManaGain());
-			capacity = std::max<int32_t>(0, capacity - noneVocation->getCapGain());
+			healthMax = std::max<int64_t>(0, healthMax - noneVocation->getHPGain());
+			manaMax = std::max<int64_t>(0, manaMax - noneVocation->getManaGain());
+			// capacity = std::max<int64_t>(0, capacity - noneVocation->getCapGain());
 		} else {
-			healthMax = std::max<int32_t>(0, healthMax - vocation->getHPGain());
-			manaMax = std::max<int32_t>(0, manaMax - vocation->getManaGain());
-			capacity = std::max<int32_t>(0, capacity - vocation->getCapGain());
+			healthMax = std::max<int64_t>(0, healthMax - vocation->getHPGain());
+			manaMax = std::max<int64_t>(0, manaMax - vocation->getManaGain());
+			// capacity = std::max<int64_t>(0, capacity - vocation->getCapGain());
 		}
 		currLevelExp = Player::getExpForLevel(level);
 	}
@@ -2513,9 +2513,9 @@ void Player::death(Creature* lastHitCreature) {
 
 			while (level > 1 && experience < Player::getExpForLevel(level)) {
 				--level;
-				healthMax = std::max<int32_t>(0, healthMax - vocation->getHPGain());
-				manaMax = std::max<int32_t>(0, manaMax - vocation->getManaGain());
-				capacity = std::max<int32_t>(0, capacity - vocation->getCapGain());
+				healthMax = std::max<int64_t>(0, healthMax - vocation->getHPGain());
+				manaMax = std::max<int64_t>(0, manaMax - vocation->getManaGain());
+				// capacity = std::max<int64_t>(0, capacity - vocation->getCapGain());
 			}
 
 			if (oldLevel != level) {
@@ -3957,7 +3957,7 @@ void Player::getPathSearchParams(const Creature* creature, FindPathParams &fpp) 
 	fpp.fullPathSearch = true;
 }
 
-void Player::doAttacking(uint32_t) {
+void Player::doAttacking(uint64_t) {
 	if (lastAttack == 0) {
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
 	}
@@ -4249,7 +4249,7 @@ void Player::onPlacedCreature() {
 	sendUnjustifiedPoints();
 }
 
-void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points) {
+void Player::onAttackedCreatureDrainHealth(Creature* target, int64_t points) {
 	Creature::onAttackedCreatureDrainHealth(target, points);
 
 	if (target) {
@@ -4263,7 +4263,7 @@ void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points) {
 	}
 }
 
-void Player::onTargetCreatureGainHealth(Creature* target, int32_t points) {
+void Player::onTargetCreatureGainHealth(Creature* target, int64_t points) {
 	if (target && party) {
 		Player* tmpPlayer = nullptr;
 
@@ -4410,12 +4410,12 @@ bool Player::lastHitIsPlayer(Creature* lastHitCreature) {
 	return lastHitMaster && lastHitMaster->getPlayer();
 }
 
-void Player::changeHealth(int32_t healthChange, bool sendHealthChange /* = true*/) {
+void Player::changeHealth(int64_t healthChange, bool sendHealthChange /* = true*/) {
 	Creature::changeHealth(healthChange, sendHealthChange);
 	sendStats();
 }
 
-void Player::changeMana(int32_t manaChange) {
+void Player::changeMana(int64_t manaChange) {
 	if (!hasFlag(PlayerFlags_t::HasInfiniteMana)) {
 		Creature::changeMana(manaChange);
 	}
@@ -4785,7 +4785,7 @@ double Player::getLostPercent() const {
 	double lossPercent;
 	if (level >= 24) {
 		double tmpLevel = level + (levelPercent / 100.);
-		lossPercent = ((tmpLevel + 50) * 50 * ((tmpLevel * tmpLevel) - (5 * tmpLevel) + 8)) / experience;
+		lossPercent = 10;
 	} else {
 		lossPercent = 5;
 	}

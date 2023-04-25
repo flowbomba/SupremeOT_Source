@@ -179,16 +179,16 @@ class Creature : virtual public Thing {
 			return baseSpeed;
 		}
 
-		int32_t getHealth() const {
+		int64_t getHealth() const {
 			return health;
 		}
-		virtual int32_t getMaxHealth() const {
+		virtual int64_t getMaxHealth() const {
 			return healthMax;
 		}
-		uint32_t getMana() const {
+		uint64_t getMana() const {
 			return mana;
 		}
-		virtual uint32_t getMaxMana() const {
+		virtual uint64_t getMaxMana() const {
 			return mana;
 		}
 
@@ -335,12 +335,12 @@ class Creature : virtual public Thing {
 			return FACTION_DEFAULT;
 		}
 
-		virtual void changeHealth(int32_t healthChange, bool sendHealthChange = true);
-		virtual void changeMana(int32_t manaChange);
+		virtual void changeHealth(int64_t healthChange, bool sendHealthChange = true);
+		virtual void changeMana(int64_t manaChange);
 
-		void gainHealth(Creature* attacker, int32_t healthGain);
-		virtual void drainHealth(Creature* attacker, int32_t damage);
-		virtual void drainMana(Creature* attacker, int32_t manaLoss);
+		void gainHealth(Creature* attacker, int64_t healthGain);
+		virtual void drainHealth(Creature* attacker, int64_t damage);
+		virtual void drainMana(Creature* attacker, int64_t manaLoss);
 
 		virtual bool challengeCreature(Creature*) {
 			return false;
@@ -348,7 +348,7 @@ class Creature : virtual public Thing {
 
 		void onDeath();
 		virtual uint64_t getGainedExperience(Creature* attacker) const;
-		void addDamagePoints(Creature* attacker, int32_t damagePoints);
+		void addDamagePoints(Creature* attacker, int64_t damagePoints);
 		bool hasBeenAttacked(uint32_t attackerId);
 
 		// combat event functions
@@ -359,8 +359,8 @@ class Creature : virtual public Thing {
 		virtual void onCombatRemoveCondition(Condition* condition);
 		virtual void onAttackedCreature(Creature*) { }
 		virtual void onAttacked();
-		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
-		virtual void onTargetCreatureGainHealth(Creature*, int32_t) { }
+		virtual void onAttackedCreatureDrainHealth(Creature* target, int64_t points);
+		virtual void onTargetCreatureGainHealth(Creature*, int64_t) { }
 		void onAttackedCreatureKilled(Creature* target);
 		virtual bool onKilledCreature(Creature* target, bool lastHit = true);
 		virtual void onGainExperience(uint64_t gainExp, Creature* target);
@@ -406,7 +406,7 @@ class Creature : virtual public Thing {
 
 		virtual void onPlacedCreature() { }
 
-		virtual bool getCombatValues(int32_t &, int32_t &) {
+		virtual bool getCombatValues(int64_t &, int64_t &) {
 			return false;
 		}
 
@@ -485,10 +485,10 @@ class Creature : virtual public Thing {
 			}
 		}
 		struct CountBlock_t {
-				int32_t total;
+				int64_t total;
 				int64_t ticks;
 		};
-		using CountMap = std::map<uint32_t, CountBlock_t>;
+		using CountMap = std::map<uint64_t, CountBlock_t>;
 		CountMap getDamageMap() const {
 			return damageMap;
 		}
@@ -539,10 +539,11 @@ class Creature : virtual public Thing {
 		uint32_t blockTicks = 0;
 		uint32_t lastStepCost = 1;
 		uint16_t baseSpeed = 110;
-		uint32_t mana = 0;
+		uint64_t mana = 0;
 		int32_t varSpeed = 0;
-		int32_t health = 1000;
-		int32_t healthMax = 1000;
+		int64_t health = 1000;
+		int64_t healthMax = 1000;
+
 
 		uint16_t manaShield = 0;
 		uint16_t maxManaShield = 0;
@@ -583,7 +584,7 @@ class Creature : virtual public Thing {
 		void updateTileCache(const Tile* tile, int32_t dx, int32_t dy);
 		void updateTileCache(const Tile* tile, const Position &pos);
 		void onCreatureDisappear(const Creature* creature, bool isLogout);
-		virtual void doAttacking(uint32_t) { }
+		virtual void doAttacking(uint64_t) { }
 		virtual bool hasExtraSwing() {
 			return false;
 		}

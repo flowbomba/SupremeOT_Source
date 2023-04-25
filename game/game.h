@@ -408,13 +408,13 @@ class Game {
 		void applyCharmRune(const Monster* targetMonster, Player* attackerPlayer, Creature* target, const int32_t &realDamage) const;
 		void applyManaLeech(
 			Player* attackerPlayer, const Monster* targetMonster,
-			const CombatDamage &damage, const int32_t &realDamage
+			const CombatDamage &damage, const int64_t &realDamage
 		) const;
 		void applyLifeLeech(
 			Player* attackerPlayer, const Monster* targetMonster,
-			const CombatDamage &damage, const int32_t &realDamage
+			const CombatDamage &damage, const int64_t &realDamage
 		) const;
-		int32_t calculateLeechAmount(const int32_t &realDamage, const uint16_t &skillAmount, int targetsAffected) const;
+		int64_t calculateLeechAmount(const int64_t &realDamage, const uint16_t &skillAmount, int targetsAffected) const;
 		bool combatChangeMana(Creature* attacker, Creature* target, CombatDamage &damage);
 
 		// Animation help functions

@@ -466,7 +466,7 @@ int CreatureFunctions::luaCreatureSetHealth(lua_State* L) {
 		return 1;
 	}
 
-	creature->health = std::min<int32_t>(getNumber<uint32_t>(L, 2), creature->healthMax);
+	creature->health = std::min<int64_t>(getNumber<uint64_t>(L, 2), creature->healthMax);
 	g_game().addCreatureHealth(creature);
 
 	Player* player = creature->getPlayer();
@@ -486,7 +486,7 @@ int CreatureFunctions::luaCreatureAddHealth(lua_State* L) {
 	}
 
 	CombatDamage damage;
-	damage.primary.value = getNumber<int32_t>(L, 2);
+	damage.primary.value = getNumber<int64_t>(L, 2);
 	if (damage.primary.value >= 0) {
 		damage.primary.type = COMBAT_HEALING;
 	} else if (damage.primary.value < 0) {
@@ -517,8 +517,8 @@ int CreatureFunctions::luaCreatureSetMaxHealth(lua_State* L) {
 		return 1;
 	}
 
-	creature->healthMax = getNumber<uint32_t>(L, 2);
-	creature->health = std::min<int32_t>(creature->health, creature->healthMax);
+	creature->healthMax = getNumber<uint64_t>(L, 2);
+	creature->health = std::min<int64_t>(creature->health, creature->healthMax);
 	g_game().addCreatureHealth(creature);
 
 	Player* player = creature->getPlayer();

@@ -87,7 +87,7 @@ uint32_t Monster::getReflectValue(CombatType_t reflectType) const {
 	return 0;
 }
 
-uint32_t Monster::getHealingCombatValue(CombatType_t healingType) const {
+uint64_t Monster::getHealingCombatValue(CombatType_t healingType) const {
 	auto it = mType->info.healingMap.find(healingType);
 	if (it != mType->info.healingMap.end()) {
 		return it->second;
@@ -539,7 +539,7 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 				auto it = resultList.begin();
 				getTarget = *it;
 				if (++it != resultList.end()) {
-					int32_t minHp = getTarget->getHealth();
+					int64_t minHp = getTarget->getHealth();
 					do {
 						if ((*it)->getHealth() < minHp) {
 							getTarget = *it;
@@ -560,7 +560,7 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 				auto it = resultList.begin();
 				getTarget = *it;
 				if (++it != resultList.end()) {
-					int32_t mostDamage = 0;
+					int64_t mostDamage = 0;
 					do {
 						const auto &dmg = damageMap.find((*it)->getID());
 						if (dmg != damageMap.end()) {
@@ -619,14 +619,14 @@ BlockType_t Monster::blockHit(Creature* attacker, CombatType_t combatType, int32
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
 
 	if (damage != 0) {
-		int32_t elementMod = 0;
+		int64_t elementMod = 0;
 		auto it = mType->info.elementMap.find(combatType);
 		if (it != mType->info.elementMap.end()) {
 			elementMod = it->second;
 		}
 
 		if (elementMod != 0) {
-			damage = static_cast<int32_t>(std::round(damage * ((100 - elementMod) / 100.)));
+			damage = static_cast<int64_t>(std::round(damage * ((100 - elementMod) / 100.)));
 			if (damage <= 0) {
 				damage = 0;
 				blockType = BLOCK_ARMOR;
@@ -800,7 +800,7 @@ void Monster::onThink(uint32_t interval) {
 	}
 }
 
-void Monster::doAttacking(uint32_t interval) {
+void Monster::doAttacking(uint64_t interval) {
 	if (!attackedCreature || (isSummon() && attackedCreature == this)) {
 		return;
 	}
@@ -847,8 +847,8 @@ void Monster::doAttacking(uint32_t interval) {
 				maxCombatValue = spellBlock.maxCombatValue * multiplier;
 
 				if (maxCombatValue <= 0 && forgeAttackBonus > 0) {
-					minCombatValue *= static_cast<int32_t>(forgeAttackBonus);
-					maxCombatValue *= static_cast<int32_t>(forgeAttackBonus);
+					minCombatValue *= static_cast<int64_t>(forgeAttackBonus);
+					maxCombatValue *= static_cast<int64_t>(forgeAttackBonus);
 				}
 
 				if (!spellBlock.spell) {
@@ -1879,7 +1879,7 @@ bool Monster::isInSpawnRange(const Position &pos) const {
 	return true;
 }
 
-bool Monster::getCombatValues(int32_t &min, int32_t &max) {
+bool Monster::getCombatValues(int64_t &min, int64_t &max) {
 	if (minCombatValue == 0 && maxCombatValue == 0) {
 		return false;
 	}
@@ -1977,7 +1977,7 @@ void Monster::setNormalCreatureLight() {
 	internalLight = mType->info.light;
 }
 
-void Monster::drainHealth(Creature* attacker, int32_t damage) {
+void Monster::drainHealth(Creature* attacker, int64_t damage) {
 	Creature::drainHealth(attacker, damage);
 
 	if (damage > 0 && randomStepping) {
@@ -1990,7 +1990,7 @@ void Monster::drainHealth(Creature* attacker, int32_t damage) {
 	}
 }
 
-void Monster::changeHealth(int32_t healthChange, bool sendHealthChange /* = true*/) {
+void Monster::changeHealth(int64_t healthChange, bool sendHealthChange /* = true*/) {
 	// In case a player with ignore flag set attacks the monster
 	setIdle(false);
 	Creature::changeHealth(healthChange, sendHealthChange);
@@ -2082,7 +2082,8 @@ void Monster::configureForgeSystem() {
 
 	// Change health based in stacks
 	float percentToIncrement = static_cast<float>((forgeStack * 6) + 100) / 100.f;
-	auto newHealth = static_cast<int32_t>(std::ceil(static_cast<float>(healthMax) * percentToIncrement));
+	auto newHealth = static_cast<int64_t>(std::ceil(static_cast<float>(healthMax) * percentToIncrement));
+
 
 	healthMax = newHealth;
 	health = newHealth;
@@ -2100,8 +2101,9 @@ void Monster::clearFiendishStatus() {
 	monsterForgeClassification = ForgeClassifications_t::FORGE_NORMAL_MONSTER;
 
 	float multiplier = g_configManager().getFloat(RATE_MONSTER_HEALTH);
-	health = mType->info.health * static_cast<int32_t>(multiplier);
-	healthMax = mType->info.healthMax * static_cast<int32_t>(multiplier);
+	health = mType->info.health * static_cast<int64_t>(multiplier);
+	healthMax = mType->info.healthMax * static_cast<int64_t>(multiplier);
+	
 
 	// Set icon
 	setMonsterIcon(0, CREATUREICON_NONE);
