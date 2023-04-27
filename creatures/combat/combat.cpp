@@ -942,8 +942,8 @@ void Combat::doCombatHealth(Creature* caster, Creature* target, CombatDamage &da
 			double_t randomChance = uniform_random(0, 10000) / 100;
 			if (damage.primary.type != COMBAT_HEALING && fatalChance > 0 && randomChance < fatalChance) {
 				damage.fatal = true;
-				damage.primary.value += static_cast<int32_t>(std::round(damage.primary.value * 0.6));
-				damage.secondary.value += static_cast<int32_t>(std::round(damage.secondary.value * 0.6));
+				damage.primary.value += static_cast<int64_t>(std::round(damage.primary.value * 0.6));
+				damage.secondary.value += static_cast<int64_t>(std::round(damage.secondary.value * 0.6));
 			}
 		}
 	}
@@ -976,8 +976,8 @@ void Combat::doCombatHealth(Creature* caster, const Position &position, const Ar
 			double_t randomChance = uniform_random(0, 10000) / 100;
 			if (damage.primary.type != COMBAT_HEALING && fatalChance > 0 && randomChance < fatalChance) {
 				damage.fatal = true;
-				damage.primary.value += static_cast<int32_t>(std::round(damage.primary.value * 0.6));
-				damage.secondary.value += static_cast<int32_t>(std::round(damage.secondary.value * 0.6));
+				damage.primary.value += static_cast<int64_t>(std::round(damage.primary.value * 0.6));
+				damage.secondary.value += static_cast<int64_t>(std::round(damage.secondary.value * 0.6));
 			}
 		}
 	}
@@ -1122,7 +1122,7 @@ void ValueCallback::getMinMaxValues(Player* player, CombatDamage &damage, bool u
 	LuaScriptInterface::setMetatable(L, -1, "Player");
 
 	int16_t elementAttack = 0; // To calculate elemental damage after executing spell script and get real damage.
-	int32_t attackValue = 7; // default start attack value
+	int64_t attackValue = 7; // default start attack value
 	int parameters = 1;
 	bool shouldCalculateSecondaryDamage = false;
 
@@ -1190,15 +1190,15 @@ void ValueCallback::getMinMaxValues(Player* player, CombatDamage &damage, bool u
 		LuaScriptInterface::reportError(nullptr, LuaScriptInterface::popString(L));
 	} else {
 
-		int32_t defaultDmg = normal_random(
-			LuaScriptInterface::getNumber<int32_t>(L, -2),
-			LuaScriptInterface::getNumber<int32_t>(L, -1)
+		int64_t defaultDmg = normal_random(
+			LuaScriptInterface::getNumber<int64_t>(L, -2),
+			LuaScriptInterface::getNumber<int64_t>(L, -1)
 		);
 
 		if (shouldCalculateSecondaryDamage) {
 			double factor = (double)elementAttack / (double)attackValue; // attack value here is phys dmg + element dmg
-			int32_t elementDamage = std::round(defaultDmg * factor);
-			int32_t physDmg = std::round(defaultDmg * (1.0 - factor));
+			int64_t elementDamage = std::round(defaultDmg * factor);
+			int64_t physDmg = std::round(defaultDmg * (1.0 - factor));
 			damage.primary.value = physDmg;
 			damage.secondary.value = elementDamage;
 

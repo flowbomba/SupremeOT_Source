@@ -30,7 +30,7 @@ bool IOBestiary::parseCharmCombat(Charm* charm, Player* player, Creature* target
 			player->sendCancelMessage(charm->cancelMsg);
 			return false;
 		}
-		int32_t maxHealth = target->getMaxHealth();
+		int64_t maxHealth = target->getMaxHealth();
 		charmDamage.primary.type = charm->dmgtype;
 		charmDamage.primary.value = ((-maxHealth * (charm->percent)) / 100);
 		charmDamage.extension = true;

@@ -1403,7 +1403,7 @@ int MonsterTypeFunctions::luaMonsterTypeStrategiesTargetHealth(lua_State* L) {
 		if (lua_gettop(L) == 1) {
 			lua_pushnumber(L, monsterType->info.strategiesTargetHealth);
 		} else {
-			monsterType->info.strategiesTargetHealth = getNumber<int32_t>(L, 2);
+			monsterType->info.strategiesTargetHealth = getNumber<int64_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {

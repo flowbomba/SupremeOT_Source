@@ -1174,9 +1174,9 @@ void Events::eventPlayerOnCombat(Player* player, Creature* target, Item* item, C
 	if (scriptInterface.protectedCall(L, 8, 4) != 0) {
 		LuaScriptInterface::reportError(nullptr, LuaScriptInterface::popString(L));
 	} else {
-		damage.primary.value = std::abs(LuaScriptInterface::getNumber<int32_t>(L, -4));
+		damage.primary.value = std::abs(LuaScriptInterface::getNumber<int64_t>(L, -4));
 		damage.primary.type = LuaScriptInterface::getNumber<CombatType_t>(L, -3);
-		damage.secondary.value = std::abs(LuaScriptInterface::getNumber<int32_t>(L, -2));
+		damage.secondary.value = std::abs(LuaScriptInterface::getNumber<int64_t>(L, -2));
 		damage.secondary.type = LuaScriptInterface::getNumber<CombatType_t>(L, -1);
 
 		lua_pop(L, 4);
